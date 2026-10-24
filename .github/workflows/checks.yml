@@ -1,0 +1,28 @@
+name: Checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.23'
+      - run: uv sync --frozen --extra browser
+      - run: uv run --frozen --extra browser playwright install --with-deps chromium
+      - name: Select the installed test browser
+        run: |
+          uv run --frozen --extra browser python - <<'PY'
+          import os
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as playwright:
+              with open(os.environ['GITHUB_ENV'], 'a') as output:
+                  output.write('WOODMOOD_TEST_CHROME=' + playwright.chromium.executable_path + '\n')
+          PY
+      - run: uv run --frozen --extra browser pytest -q
+      - run: uv run --frozen python scripts/package-pc.py

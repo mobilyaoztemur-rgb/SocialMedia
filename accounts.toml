@@ -1,0 +1,51 @@
+# Public profile addresses supplied by the owner. No credentials or session cookies.
+[brand]
+name = "Woodmood Mobilya"
+website = "https://woodmoodmobilya.com/tr"
+projects = "https://woodmoodmobilya.com/tr/projeler"
+
+[[accounts]]
+platform = "instagram"
+label = "Instagram"
+profile_url = "https://www.instagram.com/mobilyawoodmood/"
+phase = 1
+[[accounts]]
+platform = "facebook"
+label = "Facebook"
+profile_url = "https://www.facebook.com/mobilyawoodmood"
+phase = 1
+[[accounts]]
+platform = "linkedin"
+label = "LinkedIn"
+profile_url = "https://www.linkedin.com/company/mobilyawoodmood"
+phase = 1
+[[accounts]]
+platform = "pinterest"
+label = "Pinterest"
+profile_url = "https://tr.pinterest.com/mobilyawoodmood/"
+phase = 2
+[[accounts]]
+platform = "threads"
+label = "Threads"
+profile_url = "https://www.threads.com/@mobilyawoodmood"
+phase = 2
+[[accounts]]
+platform = "tumblr"
+label = "Tumblr"
+profile_url = "https://www.tumblr.com/mobilyawoodmood"
+phase = 2
+[[accounts]]
+platform = "x"
+label = "X"
+profile_url = "https://x.com/mobilyawoodmood"
+phase = 2
+[[accounts]]
+platform = "youtube"
+label = "YouTube"
+profile_url = "https://www.youtube.com/@mobilyawoodmood"
+phase = 3
+[[accounts]]
+platform = "tiktok"
+label = "TikTok"
+profile_url = "https://www.tiktok.com/@mobilyawoodmood"
+phase = 3

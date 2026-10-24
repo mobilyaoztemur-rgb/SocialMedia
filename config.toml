@@ -1,0 +1,29 @@
+[source]
+url = "https://woodmoodmobilya.com/tr/projeler"
+allowed_hosts = ["woodmoodmobilya.com", "www.woodmoodmobilya.com"]
+# Selectors validated against the four live project pages on 2026-10-24.
+project_link_selector = ".kart-link[href]"
+project_path_prefixes = ["/tr/projeler/", "/tr/proje/"]
+title_selector = ".detay-acilis h1"
+description_selector = ".detay-acilis .acilis-aciklama, .detay-govde .metin p"
+image_selector = ".detay-acilis img"
+image_link_selector = ".detay-galeri a[href]"
+next_selector = "a[rel='next']"
+scan_interval_seconds = 21600
+max_pages = 20
+# Owner-confirmed order. New discoveries append after this initial backlog.
+append_new_projects = true
+initial_project_order = [
+  "https://woodmoodmobilya.com/tr/projeler/azerbaycan-konut-proje",
+  "https://woodmoodmobilya.com/tr/projeler/firat-serhat-motors-ofis-ve-resepsiyon",
+  "https://woodmoodmobilya.com/tr/projeler/mormenekse-konut-projesi",
+  "https://woodmoodmobilya.com/tr/projeler/northernland-grand-sapphire-penthouse",
+]
+
+[workflow]
+platforms = ["instagram", "facebook", "linkedin"]
+mode = "automatic"
+timezone = "Europe/Istanbul"
+# Live publishing is not implemented in this foundation. No posts leave this app.
+publishing_enabled = false
+# A scan interval is NOT a publishing cadence. Set cadence after business review.

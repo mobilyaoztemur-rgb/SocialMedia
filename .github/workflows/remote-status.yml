@@ -1,0 +1,36 @@
+name: Check PC connection
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.23'
+      - run: uv sync --frozen
+      - name: Verify the configured PC bridge
+        env:
+          WOODMOOD_BRIDGE_URL: ${{ vars.WOODMOOD_BRIDGE_URL }}
+          WOODMOOD_BRIDGE_TOKEN: ${{ secrets.WOODMOOD_BRIDGE_TOKEN }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+        run: |
+          uv run --frozen python - <<'PY'
+          import httpx
+          from woodmood.remote import BridgeClient
+          try:
+              client = BridgeClient.from_settings()
+              try:
+                  status = client.request('GET', '/v1/health').json()
+                  assert status['service'] == 'woodmood-pc-bridge' and status['browser_running']
+                  print('PC connection verified. Owner paused:', bool(status['owner_paused']))
+              finally:
+                  client.close()
+          except Exception as exc:
+              # No tokens, browser content, proxy URLs or raw remote errors in workflow logs.
+              raise SystemExit('PC connection check failed: ' + type(exc).__name__) from None
+          PY

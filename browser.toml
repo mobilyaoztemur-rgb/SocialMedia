@@ -1,0 +1,21 @@
+# Public connection metadata only; no access token, cookie or password.
+[connection]
+backend = "pc-bridge"
+host_platform = "windows-10-or-11"
+transport = "https-json"
+api_version = 1
+first_platform = "facebook"
+local_port = 8787
+# The real PC endpoint will be recorded only after the owner starts its tunnel.
+
+[workflow]
+phase = "windows_setup_pending"
+publishing_enabled = false
+owner_login_required = true
+
+[legacy_browseract]
+browser_name = "woodmood-social"
+browser_id = "chrome_local_125440600169251023"
+profile_directory = "/workspace/.local/share/browseract/profiles/chrome_local_125440600169251023"
+remote_assist_status = "gateway_unreachable"
+# Legacy credentials/profile were preserved outside Git; they are not needed by PC Bridge.
