@@ -8,7 +8,7 @@ Woodmood projelerini arşivleyen, platforma özel içerik ve görsel hazırlayan
 
 Windows 10/11 bilgisayarı kalıcı Chrome makinesi olarak kullanıyoruz. Alan adı henüz yok; ilk test için Cloudflare Quick Tunnel ve uzun Bearer anahtarı kullanan ayrı kontrol servisi hazırlandı. BrowserAct gerekmez. **Gerçek PC bağlantısı ve sosyal hesap girişleri henüz doğrulanmadı.**
 
-[Windows kurulum adımları](docs/WINDOWS_SETUP.md): `scripts\pc\setup.cmd`, `start-bridge.cmd`, girişlerden sonra `agent-ready.cmd` ve ayrı terminalde `start-tunnel.cmd`. Sahip kendi girişini yaparken ajan erişimi otomatik olarak durur. Kalıcı profil ve anahtar `%LOCALAPPDATA%\WoodmoodSocial` içinde saklanır.
+[Windows kurulum adımları](docs/WINDOWS_SETUP.md): `scripts\pc\setup.cmd`, manuel giriş için `owner-browser.cmd`, bu Chrome kapatıldıktan sonra `start-bridge.cmd` ve `agent-ready.cmd` ve ayrı terminalde `start-tunnel.cmd`. Manuel girişte Chrome otomasyon bağlantısı olmadan açılır; kontrol servisi daha sonra aynı kalıcı profile yerel CDP ile bağlanır. Sahip modu ayrıca ajan erişimini durdurur. Kalıcı profil ve anahtar `%LOCALAPPDATA%\WoodmoodSocial` içinde saklanır.
 
 Kontrol istemcisi `python -m woodmood.remote` ile bu bulut ortamından HTTPS üzerinden kullanılabilir. Yeni bir MCP kaydı eklemek zorunlu değildir. Gerçek tünel adresi ve anahtarı geldiğinde bağlantı ayrıca test edilecek. Kaynak kurulum paketi `python scripts/package-pc.py` ile `dist/` altında üretilir; sır ve profil içermez.
 

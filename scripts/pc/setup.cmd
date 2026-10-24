@@ -12,4 +12,5 @@ if errorlevel 1 exit /b 1
 uv run --frozen --extra browser python -m woodmood.bridge init
 if errorlevel 1 exit /b 1
 echo Setup finished. Install Google Chrome if it is not already installed.
-echo Start start-bridge.cmd, sign in in the NEW Chrome window, then run agent-ready.cmd.
+echo Run owner-browser.cmd FIRST, sign in in normal Chrome, then close that window.
+echo Next run start-bridge.cmd and agent-ready.cmd.

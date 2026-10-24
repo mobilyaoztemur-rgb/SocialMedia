@@ -58,3 +58,13 @@ Kullanıcı sürekli açık Windows 10/11 bilgisayar kullanmayı seçti; henüz 
 - İlk Quick Tunnel adresi süreç yeniden başlayınca değişebilir. Cloudflare Access SSO bu deneme yolunda kurulmadı; origin servisinin uzun Bearer anahtarı tüm API yollarında zorunludur.
 
 GitHub için CI dosyasına ek olarak yalnızca elle başlatılan `remote-status.yml` hazırlanmıştır; gerekli secret/variable bağlarını ortam değişkenlerine aktararak içerik veya anahtarları loglamadan sağlık kontrolü yapar. GitHub üzerinde çalıştırılmamıştır. Kaynak dosyaları henüz bu görev tarafından GitHub'a push edilmemiştir.
+
+## Google giriş uyarısı için manuel giriş ayrımı
+
+Google girişinde “güvenli olmayabilir” uyarısı bildirildi. Google'ın destek belgesi, yazılım otomasyonuyla kontrol edilen tarayıcılarda girişin engellenebildiğini doğruluyor. Eski sahip modu yalnızca API işlemlerini durduruyordu; Playwright tarafından başlatılmış tarayıcı bağlantısını kaldırmıyordu.
+
+- `owner-browser.cmd` eklendi: köprü kapalıyken aynı Woodmood profiliyle normal Chrome açar; sürücü ve remote-debugging bayrağı yoktur. Kullanıcı giriş yapar, pencereyi kapatır, ardından köprü yerel CDP ile aynı profile bağlanır.
+- Yeni ve eski `bridge.json` dosyalarında varsayılan `connection_mode=native` kullanılır. Mevcut profil ve anahtar değiştirilmez. Kontrollü eski `playwright` modu uyumluluk/test için korunur.
+- CDP adresi yalnızca özel profilin `DevToolsActivePort` kaydından alınır; loopback ve websocket kimliği doğrulanır. Kişisel varsayılan Chrome profiline bağlanılmaz ve CDP internete açılmaz.
+- Tam test çalıştırması: **76 test geçti**. Gerçek Chromium testleri hem eski hem yeni bağlantı yolunda çalıştı; eski kontrollü profilden yeni native/CDP yoluna sentetik oturumun taşındığı ayrıca doğrulandı.
+- Windows ve gerçek Google hesabı üzerinde giriş testi yapılmadı. Bu değişiklik Google güvenlik kısıtının kesin kalkacağı iddiası değildir. Sertifika/sandbox doğrulaması veya Google doğrulamaları kapatılmadı; fingerprint gizleme uygulanmadı.

@@ -32,10 +32,10 @@ Terminalden veya dosyaya çift tıklayarak:
 
 ```text
 scripts\pc\setup.cmd
-scripts\pc\start-bridge.cmd
+scripts\pc\owner-browser.cmd
 ```
 
-Birinci dosya kurar ve özel anahtarı ilk seferde üretir. Tekrar çalıştırmak eski anahtarı, profili veya sahibin ayarlarını değiştirmez. İkinci dosya servisi ve YENİ Chrome penceresini başlatır. Pencereyi açan terminali kapatırsanız servis durur.
+Birinci dosya kurar ve özel anahtarı ilk seferde üretir. Tekrar çalıştırmak eski anahtarı, profili veya sahibin ayarlarını değiştirmez. İkinci dosya aynı Woodmood profiliyle **normal Chrome** açar: otomasyon sürücüsü ve uzaktan hata ayıklama bağlantısı yoktur. Mevcut kontrol servisi çalışıyorsa önce onun terminalinde Ctrl+C ile durdurmanız istenir. Profil ve anahtar değiştirilmez.
 
 Varsayılan özel dosyalar:
 
@@ -50,7 +50,7 @@ Bu klasörü genel paylaşıma, Git'e veya herkese açık bir yedeğe koymayın.
 
 ## 3. Hesaplara sizin giriş yapmanız
 
-İlk kurulumda **sahip modu** aktiftir: ajan sayfa listesi, ekran görüntüsü, metin okuma veya tıklama yapamaz. Kontrol servisi yalnızca bağlantı sağlık bilgisini verir.
+İlk kurulumda **sahip modu** aktiftir. Google gibi sağlayıcıların otomasyonla açılan girişleri engelleyebilmesi nedeniyle ilk giriş, kontrol servisi tamamen kapalıyken `owner-browser.cmd` ile açılan normal Chrome içinde yapılır. Kontrol servisi daha sonra aynı profile bağlanır. Servis çalışırken de sahip modu sayfa listesini, ekran görüntüsünü, metin okumayı ve tıklamayı 423 ile engeller. Bu dosya modu tek başına tarayıcıdaki otomasyon bağlantısını kaldırmaz; giriş için normal pencereyi kullanın.
 
 Yeni açılan Chrome penceresinde sırayla hesaplara girin. Facebook için sayfayı yönetebilen kişisel hesabınızla giriş yapın, sonra Woodmood sayfasını açın. MFA/doğrulamaları kendiniz tamamlayın. Şifreleri sohbete girmeniz gerekmez; isterseniz daha sonraki otomasyon gereksinimleri için uygun secrets deposunda ayrıca saklanabilirler.
 
@@ -66,9 +66,10 @@ Yeni açılan Chrome penceresinde sırayla hesaplara girin. Facebook için sayfa
 
 Sırasıyla ilerlemek için önce yalnızca Facebook'a da giriş yapabilirsiniz. Hesapların her birinde doğru profil ve yönetici erişimi daha sonra ayrıca doğrulanacak.
 
-Girişler bitince çalıştırın:
+Girişler bitince **bu Chrome penceresini tamamen kapatın**, sonra çalıştırın:
 
 ```text
+scripts\pc\start-bridge.cmd
 scripts\pc\agent-ready.cmd
 ```
 
@@ -78,7 +79,7 @@ Bu, sahibin tarayıcıyı ajana devretmesidir; sosyal hesaba gerçekten giriş y
 scripts\pc\owner-login.cmd
 ```
 
-Bu dosya yeni ajan işlemlerini engeller ve devam eden işlemin bitmesini bekler. Tamamlandığını söylemeden Chrome'a yazmayın. Siz giriş yaparken ajan tarafı işlem yapmaz. Hazır olduğunuzda `agent-ready.cmd` ile tekrar devredin.
+Bu dosya yeni ajan işlemlerini engeller ve devam eden işlemin bitmesini bekler. Normal bir giriş penceresine geçmek için bundan sonra `start-bridge.cmd` terminalinde Ctrl+C ile servisi durdurun, `owner-browser.cmd` çalıştırın. Girişten sonra Chrome'u kapatın, servisi yeniden başlatın ve `agent-ready.cmd` ile devredin. Aynı profilde iki farklı Chrome sürecini zorla açmayın.
 
 ## 4. Alan adı olmadan ilk Cloudflare bağlantısı
 
@@ -153,3 +154,11 @@ Kullanıcının proje kuyruğu Azerbaycan → Fırat Serhat Motors → Mormenek�
 Kodlar GitHub'a gönderildikten sonra `.github/workflows/remote-status.yml`, yalnızca elle çalıştırılan **Check PC connection** işini sağlar. Repo değişkeni `WOODMOOD_BRIDGE_URL` ve repo secret'ı `WOODMOOD_BRIDGE_TOKEN` ayarlanır. Cloudflare Access ayrıca kurulmadıysa CF_ACCESS alanları boş bırakılır. Workflow, bu değerleri çalışma ortamına aktarır ve yalnızca servis sağlık bilgisini kontrol eder; Chrome ekranını, hesap içeriğini veya anahtarları loglara yazmaz. Sosyal ağa gönderi göndermez.
 
 Workflow dosyaları hazırlandı, ancak bu çalışma sırasında GitHub'a push yapılmadı veya bir GitHub workflow'u çalıştırılmadı. Geçici tünel adresi değişirse repo değişkeni ve bu sohbetin istemci adresi güncellenmelidir. GitHub Actions erişimi, benim bu sohbetten PC'ye erişimimin ayrıca doğrulanması gereğini ortadan kaldırmaz.
+
+## Google “Bu tarayıcı veya uygulama güvenli olmayabilir” uyarısı
+
+Google, desteklenen Chrome kullanılsa bile otomasyonla kontrol edilen tarayıcıdan girişi engelleyebilir. Chromium'un açık kaynaklı olması bu giriş politikasını değiştirmez. Bu nedenle normal manuel giriş ile otomasyon bağlantısı bu sürümde ayrıldı. Güvenlik kontrolleri kapatılmaz, user-agent/kimlik gizleme veya CAPTCHA atlatma yöntemi uygulanmaz.
+
+Güncelleme için eski servisi durdurun ve yeni ZIP'i ayrı bir klasöre açın. `owner-browser.cmd` mevcut LocalAppData profilini kullanır; eski oturumları veya anahtarı silmez. Google girişini bu pencerede kendiniz tamamlayın. Uyarı burada da sürerse bu yöntem için başarı iddiasında bulunmayız; Google'ın desteklenen tarayıcı/hesap doğrulama adımlarını izler veya o platform için resmî OAuth/API bağlantısını değerlendiririz.
+
+Kaynaklar: https://support.google.com/accounts/answer/7675428?hl=tr ve https://developer.chrome.com/blog/remote-debugging-port .

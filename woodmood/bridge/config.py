@@ -52,11 +52,14 @@ class BridgeConfig:
     executable: str | None = None
     headless: bool = False
     sandbox: bool = True
+    connection_mode: str = "native"
 
     def __post_init__(self):
         self.directory = Path(self.directory).expanduser().resolve()
         if self.directory == ROOT or ROOT in self.directory.parents:
             raise ValueError('Browser state must live outside the Git checkout')
+        if self.connection_mode not in ("native", "playwright"):
+            raise ValueError("connection_mode must be native or playwright")
         if len(self.token) < 32:
             raise ValueError('Bridge token must contain at least 32 characters')
         if not 1024 <= self.port <= 65535:
@@ -101,7 +104,7 @@ def initialize(directory=None):
     if not config.exists():
         secure_write(config, json.dumps({'port': 8787, 'public_host': None,
                                         'executable': find_chrome(), 'headless': False,
-                                        'sandbox': True}, indent=2))
+                                        'sandbox': True, 'connection_mode': 'native'}, indent=2))
     marker = directory / 'initialized'
     if not marker.exists():
         # The first session belongs to the owner until they explicitly release it.

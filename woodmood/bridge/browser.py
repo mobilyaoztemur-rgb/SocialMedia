@@ -22,6 +22,8 @@ class Browser:
         self.context = None
         self.playwright = None
         self.pages = {}
+        self.native_process = None
+        self.cdp_browser = None
 
     @property
     def running(self):
@@ -39,11 +41,19 @@ class Browser:
         from playwright.async_api import async_playwright
         self.playwright = await async_playwright().start()
         try:
-            self.context = await self.playwright.chromium.launch_persistent_context(
-                str(self.config.profile), executable_path=self.config.executable,
-                headless=self.config.headless, chromium_sandbox=self.config.sandbox,
-                accept_downloads=False, viewport={'width': 1440, 'height': 1000},
-            )
+            if self.config.connection_mode == 'native':
+                from .native import start_debug_browser
+                endpoint, self.native_process = await start_debug_browser(self.config)
+                self.cdp_browser = await self.playwright.chromium.connect_over_cdp(endpoint, timeout=15000)
+                if not self.cdp_browser.contexts:
+                    raise ValueError('Chrome did not provide its persistent context')
+                self.context = self.cdp_browser.contexts[0]
+            else:
+                self.context = await self.playwright.chromium.launch_persistent_context(
+                    str(self.config.profile), executable_path=self.config.executable,
+                    headless=self.config.headless, chromium_sandbox=self.config.sandbox,
+                    accept_downloads=False, viewport={'width': 1440, 'height': 1000},
+                )
             # Restrict document navigation initiated by automation or page scripts.
             async def guard(route):
                 if (route.request.is_navigation_request() and route.request.frame.parent_frame is None
@@ -58,17 +68,35 @@ class Browser:
             if not self.context.pages:
                 await self.context.new_page()
         except BaseException:
-            await self.playwright.stop()
-            self.playwright = None
+            await self.stop()
             raise
 
     async def stop(self):
         try:
-            if self.context:
+            if self.cdp_browser and self.cdp_browser.is_connected():
+                # Close ONLY the dedicated browser whose endpoint came from our private profile.
+                session = await self.cdp_browser.new_browser_cdp_session()
+                await session.send('Browser.close')
+            elif self.context:
                 await self.context.close()
         finally:
             if self.playwright:
                 await self.playwright.stop()
+            if self.native_process:
+                import subprocess
+                try:
+                    await asyncio.to_thread(self.native_process.wait, 8)
+                except subprocess.TimeoutExpired:
+                    self.native_process.terminate()
+                    try:
+                        await asyncio.to_thread(self.native_process.wait, 5)
+                    except subprocess.TimeoutExpired:
+                        self.native_process.kill()
+                        await asyncio.to_thread(self.native_process.wait, 5)
+            self.context = None
+            self.playwright = None
+            self.native_process = None
+            self.cdp_browser = None
 
     def page(self, page_id):
         page = self.pages.get(page_id)

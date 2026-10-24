@@ -13,7 +13,7 @@ def main():
     sub.add_parser('init')
     sub.add_parser('serve')
     owner = sub.add_parser('owner')
-    owner.add_argument('mode', choices=['begin', 'ready'])
+    owner.add_argument('mode', choices=['begin', 'ready', 'browser'])
     sub.add_parser('status')
     args = parser.parse_args()
     if args.command == 'init':
@@ -33,7 +33,26 @@ def main():
         print(json.dumps({'initialized': True, 'owner_paused': cfg.paused_file.exists(),
                           'port': cfg.port, 'profile_present': cfg.profile.exists()}))
     elif args.command == 'owner':
-        if args.mode == 'ready':
+        if args.mode == 'browser':
+            # A real manual Chrome window, with neither a driver nor a debugging port.
+            # The same profile preserves existing logins; no cookies are copied/exported.
+            cfg.paused_file.touch(mode=0o600, exist_ok=True)
+            import httpx
+            with httpx.Client(trust_env=False, timeout=2) as client:
+                try:
+                    client.get(f'http://127.0.0.1:{cfg.port}/v1/health',
+                               headers={'Authorization': 'Bearer ' + cfg.token})
+                    raise SystemExit('Stop start-bridge.cmd with Ctrl+C first. Then run owner-browser.cmd again.')
+                except httpx.ConnectError:
+                    pass
+            from .native import launch, verified_endpoint
+            if verified_endpoint(cfg):
+                raise SystemExit('The Woodmood control browser is still open. Close its window before opening manual sign-in.')
+            launch(cfg, debugging=False)
+            print('Normal Woodmood Chrome opened with no automation connection or debugging port.')
+            print('Sign in yourself, close that Chrome window completely, then restart start-bridge.cmd.')
+            print('After inspecting your login yourself, run agent-ready.cmd to allow agent access.')
+        elif args.mode == 'ready':
             cfg.paused_file.unlink(missing_ok=True)
             print('Owner released the browser. Authorized agent requests are now allowed.')
         else:

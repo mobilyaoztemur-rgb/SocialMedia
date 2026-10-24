@@ -31,12 +31,12 @@ class FixtureBrowser(Browser):
         await self.context.route(URL, fixture)
 
 
-@pytest.fixture
-def bridge(tmp_path):
+@pytest.fixture(params=['playwright', 'native'])
+def bridge(tmp_path, request):
     executable=os.environ.get('WOODMOOD_TEST_CHROME') or shutil.which('chromium') or find_chrome()
     if not executable:
         pytest.fail('A real Chrome/Chromium executable is required for bridge readiness tests')
-    cfg=BridgeConfig(tmp_path,TOKEN,executable=executable,headless=True,sandbox=False)
+    cfg=BridgeConfig(tmp_path,TOKEN,executable=executable,headless=True,sandbox=False,connection_mode=request.param)
     browser=FixtureBrowser(cfg)
     app=create_app(cfg,browser)
     with TestClient(app,base_url='http://localhost') as client:
@@ -84,7 +84,7 @@ def test_real_browser_snapshot_fill_click_screenshot_and_operation_replay(bridge
     assert 'Woodmood test caption' in client.get(f'/v1/pages/{page_id}/snapshot').json()['text']
     shot=client.get(f'/v1/pages/{page_id}/screenshot')
     assert shot.status_code==200 and shot.headers['content-type']=='image/png'
-    with Image.open(BytesIO(shot.content)) as image: assert image.width==1440
+    with Image.open(BytesIO(shot.content)) as image: assert image.width > 500
     operation=client.get('/v1/operations/save-click-1').json()
     assert operation['state']=='done' and 'value' not in operation
     assert b'Woodmood test caption' not in (cfg.directory/'operations.sqlite3').read_bytes()
