@@ -12,6 +12,8 @@ Windows 10/11 bilgisayarı kalıcı Chrome makinesi olarak kullanıyoruz. Alan a
 
 Kontrol istemcisi `python -m woodmood.remote` ile bu bulut ortamından HTTPS üzerinden kullanılabilir. Yeni bir MCP kaydı eklemek zorunlu değildir. Gerçek tünel adresi ve anahtarı geldiğinde bağlantı ayrıca test edilecek. Kaynak kurulum paketi `python scripts/package-pc.py` ile `dist/` altında üretilir; sır ve profil içermez.
 
+Sabit adres ve Windows başlangıcı için Named Tunnel hazırlığı [docs/STABLE_ADDRESS.md](docs/STABLE_ADDRESS.md) içinde. Gerçek DNS/Cloudflare kurulumu henüz yapılmadı.
+
 Bu altyapı platform ekranlarını kullanmaya temel sağlar; platforma özel otomatik yayın akışları ve paylaşım sıklığı henüz tamamlanmadı.
 
 ## Kurulum

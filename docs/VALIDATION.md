@@ -76,3 +76,9 @@ Kullanıcı, Windows'ta `owner-browser.cmd` çalıştırırken loopback HTTP sa�
 Beş regresyon testi eklendi: cevap vermeyen TCP dinleyicisi, dolu bridge portu, dolu eski CDP portu, manuel girişte HTTP çağrılmaması ve sahip modunda timeout sonrası güvenli hata. Anahtar/profil korunması ve çıktıda token olmaması da kontrol edildi. Güncellenmiş Windows akışı sahibinin bilgisayarında henüz yeniden denenmedi.
 
 Bu düzeltme sonrası tam test çalıştırması: **81 test geçti**, başarısız/atlanan test yok. Mevcut TestClient deprecation uyarısı devam ediyor.
+
+## Sabit adres hazırlığı
+
+Kullanıcı PC'nin yeniden başlamasında URL'nin değişmemesini istedi. Yerel kullanıcı anahtarlı geçici endpoint sağlık kontrolünde browser_running=true, owner_paused=false, busy=false gördü; bu bulut ortamından istekler 403 almaya devam ediyor. DNS yalnızca okundu: NS dns10.ovh.ca/ns10.ovh.ca; sabit alt alan adı henüz bulunmuyor. DNS/Cloudflare hesabında değişiklik yapılmadı.
+
+Named Tunnel konfigürasyon üretimi için 8 test eklendi. Oluşturulan sentetik konfigürasyon resmi cloudflared 2026.10.3 `tunnel ingress validate` ile OK verdi. Tam çalışma: **89 test geçti**. Yeni Windows named-tunnel/otomatik başlangıç dosyaları gerçek PC'de çalıştırılmadı. DNS/zone erişimi, gerçek named tunnel kurulumu, bu ortamdan yeni hostname'e erişim ve reboot testi henüz bekliyor.

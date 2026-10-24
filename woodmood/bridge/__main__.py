@@ -15,6 +15,10 @@ def main():
     owner = sub.add_parser('owner')
     owner.add_argument('mode', choices=['begin', 'ready', 'browser'])
     sub.add_parser('status')
+    tunnel = sub.add_parser('named-tunnel')
+    tunnel.add_argument('--id', required=True)
+    tunnel.add_argument('--hostname', required=True)
+    tunnel.add_argument('--credentials', type=Path)
     args = parser.parse_args()
     if args.command == 'init':
         directory = initialize(args.directory)
@@ -29,6 +33,11 @@ def main():
         # This process must run in the owner's desktop session, not a Windows SYSTEM service.
         uvicorn.run(create_app(cfg), host='127.0.0.1', port=cfg.port,
                     proxy_headers=False, access_log=False, log_level='warning')
+    elif args.command == 'named-tunnel':
+        from .tunnel import configure_named_tunnel
+        path = configure_named_tunnel(cfg, args.id, args.hostname, args.credentials)
+        print('Private named-tunnel configuration prepared:', path)
+        print('Cloudflare account, active DNS zone and hostname routing must be configured separately.')
     elif args.command == 'status':
         print(json.dumps({'initialized': True, 'owner_paused': cfg.paused_file.exists(),
                           'port': cfg.port, 'profile_present': cfg.profile.exists()}))

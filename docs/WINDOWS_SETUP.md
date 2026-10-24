@@ -168,3 +168,7 @@ Kaynaklar: https://support.google.com/accounts/answer/7675428?hl=tr ve https://d
 Windows'ta eski sürümün `owner-browser.cmd` yolu, servis kapalı mı diye HTTP sağlık isteği yaparken `httpx.ConnectTimeout` verebiliyordu. Düzeltilmiş sürüm manuel giriş için HTTP isteği yapmaz; yerel portun boşluğunu kontrol eder. Port dolu veya sistem tarafından ayrılmışsa güvenli biçimde durur ve açıklayıcı mesaj verir. Sağlık yanıtı gelmemesi servisin kapalı olduğu kabul edilmez.
 
 Bu hatada Starlette veya başka paketleri tek tek kurmak gerekmez. `starlette==1.9.0` gibi satırlar kurulum çıktısıdır; PowerShell komutu değildir. Yeni ZIP'i ayrı klasöre açın; eski servisi Ctrl+C ile durdurup yeni `scripts\pc\owner-browser.cmd` dosyasını çalıştırın. Mevcut LocalAppData profili ve anahtarı korunur. `owner-login.cmd` sağlık isteği zaman aşımında da artık traceback yerine açıklayıcı mesaj verip sahip modunu korur.
+
+## Sabit adres ve yeniden başlatma
+
+Kullanıcı sabit adres istedi. Named Tunnel için konfigürasyon üretimi, `start-stable-tunnel.cmd` ve isteğe bağlı `register-stable-startup.ps1` hazırlandı. Bunlar Cloudflare hesabı/aktif zone/gerçek tünel UUID ve credential dosyası oluşturulmadan çalışır bağlantı sağlamaz. Aşamaları ajanla **tek tek** uygulayın; [STABLE_ADDRESS.md](STABLE_ADDRESS.md). Mevcut geçici bağlantıyı yeni sabit adres doğrulanmadan kapatmak gerekmez. Bilgisayarın kapalı olduğu sürede adres aynı kalır ancak servis çevrimdışı olur; görünür Chrome için Windows kullanıcısının giriş yapması gerekir.
