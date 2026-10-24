@@ -20,7 +20,7 @@ def main():
         directory = initialize(args.directory)
         print(f'PC bridge initialized. Private state: {directory}')
         print('Access token is in bridge-token inside that directory; its value is not printed.')
-        print('Owner mode is active. Start the service, sign in in its Chrome window, then run owner ready.')
+        print('Owner mode is active. Run owner-browser.cmd for manual sign-in, close Chrome, then start-bridge.cmd and agent-ready.cmd.')
         return
     cfg = BridgeConfig.load(args.directory)
     if args.command == 'serve':
@@ -37,17 +37,9 @@ def main():
             # A real manual Chrome window, with neither a driver nor a debugging port.
             # The same profile preserves existing logins; no cookies are copied/exported.
             cfg.paused_file.touch(mode=0o600, exist_ok=True)
-            import httpx
-            with httpx.Client(trust_env=False, timeout=2) as client:
-                try:
-                    client.get(f'http://127.0.0.1:{cfg.port}/v1/health',
-                               headers={'Authorization': 'Bearer ' + cfg.token})
-                    raise SystemExit('Stop start-bridge.cmd with Ctrl+C first. Then run owner-browser.cmd again.')
-                except httpx.ConnectError:
-                    pass
-            from .native import launch, verified_endpoint
-            if verified_endpoint(cfg):
-                raise SystemExit('The Woodmood control browser is still open. Close its window before opening manual sign-in.')
+            from .local import require_manual_access
+            from .native import launch
+            require_manual_access(cfg)
             launch(cfg, debugging=False)
             print('Normal Woodmood Chrome opened with no automation connection or debugging port.')
             print('Sign in yourself, close that Chrome window completely, then restart start-bridge.cmd.')
@@ -59,8 +51,13 @@ def main():
             cfg.paused_file.touch(mode=0o600, exist_ok=True)
             # Mark paused first so no new browser operations can start. Wait for the active one.
             import httpx
+            from .local import port_available
+            if port_available(cfg.port):
+                print('Bridge is stopped. Owner mode is saved for the next startup.')
+                return
+            deadline = time.monotonic() + 50
             with httpx.Client(trust_env=False, timeout=3) as client:
-                for _ in range(55):
+                while time.monotonic() < deadline:
                     try:
                         response = client.get(f'http://127.0.0.1:{cfg.port}/v1/health',
                                               headers={'Authorization': 'Bearer ' + cfg.token})
@@ -68,9 +65,9 @@ def main():
                         if not response.json()['busy']:
                             print('Browser is idle and reserved for its owner. Agent inspection is paused.')
                             return
-                    except httpx.ConnectError:
-                        print('Bridge is stopped. Owner mode is saved for the next startup.')
-                        return
+                    except httpx.HTTPError:
+                        # A timed-out health request does not prove that the browser is idle.
+                        raise SystemExit('Owner mode is saved, but the local bridge health check failed. Stop start-bridge.cmd with Ctrl+C before opening manual sign-in.') from None
                     time.sleep(1)
             raise SystemExit('Owner mode is set, but a browser action is still busy; wait before typing.')
 

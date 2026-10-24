@@ -162,3 +162,9 @@ Google, desteklenen Chrome kullanılsa bile otomasyonla kontrol edilen tarayıc�
 Güncelleme için eski servisi durdurun ve yeni ZIP'i ayrı bir klasöre açın. `owner-browser.cmd` mevcut LocalAppData profilini kullanır; eski oturumları veya anahtarı silmez. Google girişini bu pencerede kendiniz tamamlayın. Uyarı burada da sürerse bu yöntem için başarı iddiasında bulunmayız; Google'ın desteklenen tarayıcı/hesap doğrulama adımlarını izler veya o platform için resmî OAuth/API bağlantısını değerlendiririz.
 
 Kaynaklar: https://support.google.com/accounts/answer/7675428?hl=tr ve https://developer.chrome.com/blog/remote-debugging-port .
+
+## owner-browser çalışırken ConnectTimeout hatası
+
+Windows'ta eski sürümün `owner-browser.cmd` yolu, servis kapalı mı diye HTTP sağlık isteği yaparken `httpx.ConnectTimeout` verebiliyordu. Düzeltilmiş sürüm manuel giriş için HTTP isteği yapmaz; yerel portun boşluğunu kontrol eder. Port dolu veya sistem tarafından ayrılmışsa güvenli biçimde durur ve açıklayıcı mesaj verir. Sağlık yanıtı gelmemesi servisin kapalı olduğu kabul edilmez.
+
+Bu hatada Starlette veya başka paketleri tek tek kurmak gerekmez. `starlette==1.9.0` gibi satırlar kurulum çıktısıdır; PowerShell komutu değildir. Yeni ZIP'i ayrı klasöre açın; eski servisi Ctrl+C ile durdurup yeni `scripts\pc\owner-browser.cmd` dosyasını çalıştırın. Mevcut LocalAppData profili ve anahtarı korunur. `owner-login.cmd` sağlık isteği zaman aşımında da artık traceback yerine açıklayıcı mesaj verip sahip modunu korur.

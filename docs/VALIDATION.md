@@ -68,3 +68,11 @@ Google girişinde “güvenli olmayabilir” uyarısı bildirildi. Google'ın de
 - CDP adresi yalnızca özel profilin `DevToolsActivePort` kaydından alınır; loopback ve websocket kimliği doğrulanır. Kişisel varsayılan Chrome profiline bağlanılmaz ve CDP internete açılmaz.
 - Tam test çalıştırması: **76 test geçti**. Gerçek Chromium testleri hem eski hem yeni bağlantı yolunda çalıştı; eski kontrollü profilden yeni native/CDP yoluna sentetik oturumun taşındığı ayrıca doğrulandı.
 - Windows ve gerçek Google hesabı üzerinde giriş testi yapılmadı. Bu değişiklik Google güvenlik kısıtının kesin kalkacağı iddiası değildir. Sertifika/sandbox doğrulaması veya Google doğrulamaları kapatılmadı; fingerprint gizleme uygulanmadı.
+
+## Windows ConnectTimeout bildirimi
+
+Kullanıcı, Windows'ta `owner-browser.cmd` çalıştırırken loopback HTTP sağlık isteğinin `httpx.ConnectTimeout` ile sonlandığını bildirdi. Manuel girişin HTTP isteğine bağımlılığı kaldırıldı. Yerel özel port kontrolü, cevap vermeyen bir servisi yanlışlıkla kapalı saymadan manuel geçişe izin veriyor veya açıkça durduruyor. Eski CDP portu kullanımda ise bağlantı doğrulanamasa da manuel açılış engelleniyor.
+
+Beş regresyon testi eklendi: cevap vermeyen TCP dinleyicisi, dolu bridge portu, dolu eski CDP portu, manuel girişte HTTP çağrılmaması ve sahip modunda timeout sonrası güvenli hata. Anahtar/profil korunması ve çıktıda token olmaması da kontrol edildi. Güncellenmiş Windows akışı sahibinin bilgisayarında henüz yeniden denenmedi.
+
+Bu düzeltme sonrası tam test çalıştırması: **81 test geçti**, başarısız/atlanan test yok. Mevcut TestClient deprecation uyarısı devam ediyor.
