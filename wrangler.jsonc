@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "socialmedia",
+  "main": "scripts/cloudflare/bridge-relay.mjs",
+  "compatibility_date": "2025-10-01",
+  "workers_dev": true,
+  "observability": {
+    "enabled": false
+  }
+}

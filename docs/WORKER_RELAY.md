@@ -6,6 +6,8 @@ PC'den yapılan sağlık, sekme listesi ve Facebook içerik okuma testleri başa
 
 ## Kurulum — sahibine adımları tek tek ver
 
+Sahibi Cloudflare'ın GitHub bağlantısı ekranında `mobilyaoztemur-rgb/SocialMedia` deposunu seçtiyse bu yoldan devam edilebilir. Kök dizindeki `wrangler.jsonc`, `socialmedia` isimli Worker'ı yalnızca relay modülünden derler; Python uygulamasını dağıtmaz. Proje adı `socialmedia`, build komutu boş, deploy komutu `npx wrangler deploy` olmalıdır. Preview komutu isteniyorsa `npx wrangler versions upload` kullanılabilir. Root directory ayarı varsa depo kökü kalır. Deploy sonrasında gerçek workers.dev adresiyle aşağıdaki erişim testlerine geçilir. Cloudflare GitHub entegrasyonunun commit mesajındaki `[skip ci]` nedeniyle dağıtımı atlamadığını kontrol et; gerekirse panelden manuel deploy/retry yap. Ortam anahtarını Cloudflare build değişkenlerine ekleme.
+
 1. Cloudflare panelinde **Workers & Pages → Create application → Create Worker** yoluyla bir Worker oluştur. Arayüz değişirse **Start with Hello World** seçeneği kullanılabilir. Mevcut site/DNS/Nameserver ayarlarını değiştirme; ücretli plan veya ürün açma.
 2. Worker'ın **Edit code** ekranında modül içeriğini `scripts/cloudflare/bridge-relay.mjs` ile değiştirip dağıt. Dosyada şifre/token yoktur. Tek upstream, sahibinin doğrulanmış mevcut Quick Tunnel adresidir. Gerçek token kodun içine veya Worker değişkenlerine eklenmez.
 3. Gerçek `https://WORKER.HESAP.workers.dev` adresini al. Bu ortamdan anahtarsız `/v1/health` isteğinin Worker'ın JSON 401 yanıtını döndürdüğünü doğrula. 403 devam ederse çözüm tamamlandı deme.
