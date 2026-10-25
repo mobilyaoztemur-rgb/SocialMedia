@@ -25,4 +25,5 @@ jobs:
                   output.write('WOODMOOD_TEST_CHROME=' + playwright.chromium.executable_path + '\n')
           PY
       - run: uv run --frozen --extra browser pytest -q
+      - run: node --test tests/bridge-relay.test.mjs
       - run: uv run --frozen python scripts/package-pc.py

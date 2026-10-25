@@ -2,11 +2,11 @@
 
 Woodmood projelerini arşivleyen, platforma özel içerik ve görsel hazırlayan, eskiden yeniye deneme yayın planı oluşturan geliştirme altyapısı.
 
-**Mevcut durum:** Canlı siteden 4 proje alındı. Instagram, Facebook ve LinkedIn için 12 ayrı metin taslağı üretildi. Dokuz sosyal hesap tanımlı. BrowserAct giriş devri ağ engeline takıldı. Seçilen yeni yol Windows PC üzerinde kendi Chrome kontrol servisimiz; sosyal hesap girişleri bekleniyor. Gerçek sosyal ağ paylaşımı henüz uygulanmadı. Bu sürüm hiçbir sosyal ağa gönderi göndermez.
+**Mevcut durum:** Canlı siteden 4 proje alındı. Instagram, Facebook ve LinkedIn için 12 ayrı metin taslağı üretildi. Dokuz sosyal hesap tanımlı. Windows PC köprüsünün sağlık, sekme listesi ve Facebook yönetim içeriği testleri sahibi tarafından doğrulandı. Bu bulut ortamının geçici tünele erişimi 403 alıyor; [Worker üzerinden alternatif bağlantı](docs/WORKER_RELAY.md) hazırlandı, henüz dağıtılmadı. Gerçek sosyal ağ paylaşımı henüz uygulanmadı. Bu sürüm hiçbir sosyal ağa gönderi göndermez.
 
 ## Seçilen kalıcı bilgisayar bağlantısı
 
-Windows 10/11 bilgisayarı kalıcı Chrome makinesi olarak kullanıyoruz. Alan adı henüz yok; ilk test için Cloudflare Quick Tunnel ve uzun Bearer anahtarı kullanan ayrı kontrol servisi hazırlandı. BrowserAct gerekmez. **Gerçek PC bağlantısı ve sosyal hesap girişleri henüz doğrulanmadı.**
+Windows 10/11 bilgisayarı kalıcı Chrome makinesi olarak kullanıyoruz. Cloudflare'da yönetilen alan adı henüz yok; ilk test için Cloudflare Quick Tunnel ve uzun Bearer anahtarı kullanan ayrı kontrol servisi kullanılıyor. BrowserAct gerekmez. **PC tarafından bağlantı doğrulandı; bu sohbetten uçtan uca erişim henüz sağlanmadı.**
 
 [Windows kurulum adımları](docs/WINDOWS_SETUP.md): `scripts\pc\setup.cmd`, manuel giriş için `owner-browser.cmd`, bu Chrome kapatıldıktan sonra `start-bridge.cmd` ve `agent-ready.cmd` ve ayrı terminalde `start-tunnel.cmd`. Manuel girişte Chrome otomasyon bağlantısı olmadan açılır; kontrol servisi daha sonra aynı kalıcı profile yerel CDP ile bağlanır. Sahip modu ayrıca ajan erişimini durdurur. Kalıcı profil ve anahtar `%LOCALAPPDATA%\WoodmoodSocial` içinde saklanır.
 
